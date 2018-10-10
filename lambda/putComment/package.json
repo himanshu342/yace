@@ -1,0 +1,8 @@
+{
+	"name": "yace-node-api",
+	"license": "MIT",
+	"dependencies": {
+		"nanoid": "^1.2.6",
+		"nodemailer": "^4.6.8"
+	}
+}
