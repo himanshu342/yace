@@ -59,6 +59,7 @@ resource "aws_lambda_function" "put_comment" {
     variables = {
       INSTANCE_NAME = "${var.name}",
       SERVICE_URL = "${var.service_url}",
+      CORS_ALLOWED_ORIGIN = "${var.cors_allowed_origin}",
       TABLE = "${aws_dynamodb_table.db.id}",
       TOKEN_RECIPIENTS = "${var.token_recipients}",
       TOKEN_SENDER = "${var.token_sender}",
@@ -96,7 +97,8 @@ resource "aws_lambda_function" "get_comments" {
 
   environment {
     variables = {
-      TABLE = "${aws_dynamodb_table.db.id}"
+      TABLE = "${aws_dynamodb_table.db.id}",
+      CORS_ALLOWED_ORIGIN = "${var.cors_allowed_origin}"
     }
   }
 }
@@ -175,6 +177,28 @@ resource "aws_api_gateway_integration" "put_comment" {
   uri = "${aws_lambda_function.put_comment.invoke_arn}"
 }
 
+// >> CORS
+
+module "put_comment_cors" {
+  source = "github.com/squidfunk/terraform-aws-api-gateway-enable-cors"
+  version = "0.1.0"
+
+  api_id = "${aws_api_gateway_rest_api.api.id}"
+  api_resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  allowed_origin = "${var.cors_allowed_origin}"
+}
+
+resource "aws_api_gateway_method_response" "put_comment" {
+    rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+    resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
+    http_method = "${aws_api_gateway_method.put.http_method}"
+    status_code = "200"
+    response_parameters = {
+        "method.response.header.Access-Control-Allow-Origin" = true
+    }
+    depends_on = ["module.put_comment_cors"]
+}
+
 // > getComments
 
 resource "aws_api_gateway_resource" "pre_get_comments" {
@@ -204,6 +228,28 @@ resource "aws_api_gateway_integration" "get_comments" {
   integration_http_method = "POST"
   type = "AWS_PROXY"
   uri = "${aws_lambda_function.get_comments.invoke_arn}"
+}
+
+// >> CORS
+
+module "get_comments_cors" {
+  source = "github.com/squidfunk/terraform-aws-api-gateway-enable-cors"
+  version = "0.1.0"
+
+  api_id = "${aws_api_gateway_rest_api.api.id}"
+  api_resource_id = "${aws_api_gateway_resource.get_comments.id}"
+  allowed_origin = "${var.cors_allowed_origin}"
+}
+
+resource "aws_api_gateway_method_response" "get_comments" {
+    rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+    resource_id = "${aws_api_gateway_resource.get_comments.id}"
+    http_method = "${aws_api_gateway_method.get.http_method}"
+    status_code = "200"
+    response_parameters = {
+        "method.response.header.Access-Control-Allow-Origin" = true
+    }
+    depends_on = ["module.get_comments_cors"]
 }
 
 // > acceptComment

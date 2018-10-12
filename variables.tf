@@ -14,6 +14,11 @@ variable "service_url" {
   description = "The URL to run the service at, necessary for token URLs. No trailing slash. Uses the default API Gateway invoke URL if left empty."
 }
 
+variable "cors_allowed_origin" {
+  "default" = "*"
+  description = "The value for the `Access-Control-Allow-Origin` header. Allows all origins by default. Can only be a single origin or wildcard."
+}
+
 variable "token_sender" {
   description = "The email address to list as the sender of the token emails."
 }

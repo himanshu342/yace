@@ -19,15 +19,22 @@ exports.getComments = async function(event, context) {
 		})
 		.promise()
 		.then(function(data) {
-			return {
+			return addCors({
 				statusCode: 200,
 				body: JSON.stringify(data.Items)
-			};
+			});
 		})
 		.catch(function(err) {
-			return {
+			return addCors({
 				statusCode: 500,
 				body: JSON.stringify({ message: 'Fetching the comments failed.' })
-			};
+			});
 		});
 };
+
+function addCors(response) {
+	response.headers = {
+		'Access-Control-Allow-Origin': process.env.CORS_ALLOWED_ORIGIN
+	};
+	return response;
+}

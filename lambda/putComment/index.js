@@ -6,10 +6,10 @@ const AWS = require('aws-sdk'),
 	nodemailer = require('nodemailer');
 
 let fail = function(err) {
-	return {
+	return addCors({
 		statusCode: 500,
 		body: JSON.stringify({ message: 'Error while storing the comment.' })
-	};
+	});
 };
 
 exports.putComment = async function(event, context) {
@@ -17,16 +17,16 @@ exports.putComment = async function(event, context) {
 	try {
 		body = JSON.parse(event.body);
 	} catch (e) {
-		return {
+		return addCors({
 			statusCode: 400,
 			body: JSON.stringify({ message: 'Malformed request body.' })
-		};
+		});
 	}
 	if (!body.message || !body.target)
-		return {
+		return addCors({
 			statusCode: 400,
 			body: JSON.stringify({ message: 'Missing required request data: message or target.' })
-		};
+		});
 	if (!body.author) body.author = 'Anonymous';
 
 	let service_url =
@@ -54,13 +54,13 @@ exports.putComment = async function(event, context) {
 		.then(async function(data) {
 			return sendTokenMail(comment.Item, service_url)
 				.then(function(info) {
-					return {
+					return addCors({
 						statusCode: 200,
 						body: JSON.stringify({
 							message:
 								'Successfully added comment. It will need to be accepted by an administrator before it is published.'
 						})
-					};
+					});
 				})
 				.catch(fail);
 		})
@@ -104,4 +104,11 @@ If you don't want to accept the comment, you don't need to do anything.
 
 function stripTags(str) {
 	return str.replace(/<[^>]+>/gi, '');
+}
+
+function addCors(response) {
+	response.headers = {
+		'Access-Control-Allow-Origin': process.env.CORS_ALLOWED_ORIGIN
+	};
+	return response;
 }

@@ -93,6 +93,7 @@ The following options can be configured.
 | `name` | A name for your yace instance. This is primarily necessary if you want to run multiple instances alongside one another. | `yace-comments` | no |
 | `enable_auto_backup` | Whether to automatically create backups of your data. Note that this will incur additional charges. | `false` | no |
 | `service_url` | The URL to run the service at, necessary for token URLs. No trailing slash. Uses the default API Gateway invoke URL if left empty. |  | yes |
+| `cors_allowed_origin` | The value for the `Access-Control-Allow-Origin` header. Allows all origins by default. Can only be a single origin or wildcard. | `*` | no |
 | `token_sender` | The email address to list as the sender of the token emails. |  | yes |
 | `token_recipients` | A comma-separated list of recipients for the token emails. |  | yes |
 | `smtp_host` | The SMTP host to use to deliver token emails for new comments. |  | yes |
