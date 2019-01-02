@@ -42,7 +42,7 @@ module "dynamodb_autoscaler" {
 // Adapted after https://gist.github.com/smithclay/e026b10980214cbe95600b82f67b4958 and https://www.terraform.io/docs/providers/aws/guides/serverless-with-aws-lambda-and-api-gateway.html
 
 module "lambda_zip_put_comment" {
-  source = "github.com/2uinc/terraform-package-lambda"
+  source = "github.com/baltpeter/terraform-package-lambda"
   code = "${path.module}/lambda/putComment/index.js"
 }
 
@@ -83,7 +83,7 @@ resource "aws_lambda_permission" "put_comment" {
 // Lambda function getComments
 
 module "lambda_zip_get_comments" {
-  source = "github.com/2uinc/terraform-package-lambda"
+  source = "github.com/baltpeter/terraform-package-lambda"
   code = "${path.module}/lambda/getComments/index.js"
 }
 
@@ -114,7 +114,7 @@ resource "aws_lambda_permission" "get_comments" {
 // Lambda function acceptComment
 
 module "lambda_zip_accept_comment" {
-  source = "github.com/2uinc/terraform-package-lambda"
+  source = "github.com/baltpeter/terraform-package-lambda"
   code = "${path.module}/lambda/acceptComment/index.js"
 }
 
@@ -181,11 +181,11 @@ resource "aws_api_gateway_integration" "put_comment" {
 
 module "put_comment_cors" {
   source = "github.com/squidfunk/terraform-aws-api-gateway-enable-cors"
-  version = "0.1.0"
+  version = "0.2.0"
 
   api_id = "${aws_api_gateway_rest_api.api.id}"
   api_resource_id = "${aws_api_gateway_rest_api.api.root_resource_id}"
-  allowed_origin = "${var.cors_allowed_origin}"
+  allow_origin = "${var.cors_allowed_origin}"
 }
 
 resource "aws_api_gateway_method_response" "put_comment" {
@@ -234,11 +234,11 @@ resource "aws_api_gateway_integration" "get_comments" {
 
 module "get_comments_cors" {
   source = "github.com/squidfunk/terraform-aws-api-gateway-enable-cors"
-  version = "0.1.0"
+  version = "0.2.0"
 
   api_id = "${aws_api_gateway_rest_api.api.id}"
   api_resource_id = "${aws_api_gateway_resource.get_comments.id}"
-  allowed_origin = "${var.cors_allowed_origin}"
+  allow_origin = "${var.cors_allowed_origin}"
 }
 
 resource "aws_api_gateway_method_response" "get_comments" {
