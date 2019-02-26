@@ -84,6 +84,39 @@ To access the comments for a piece of content, simply send a `GET` request to `{
 ]
 ```
 
+### Atom feed for comments
+
+As an alternative to the custom JSON format described above, you can also access the comments as an Atom feed. The feed is available via `{service_url}/feed/{target}`.
+
+Data added via the `additional` property is not included in the feed.
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>post/another-blog-post</title>
+  <updated>2018-10-10T01:01:33.048Z</updated>
+  <id>yace:yace-comments:post/another-blog-post:comments</id>
+  <generator uri="https://github.com/baltpeter/yace">yace</generator>
+
+  <entry>
+    <title>Thank you. What a great blog post! I particularly like</title>
+    <id>yace:yace-comments:post/another-blog-post:comment:R0bFCe0PzQJ8pIIQ_j7n2</id>
+    <updated>2018-10-10T01:01:33.048Z</updated>
+    <author><name>Benni</name></author>
+    <content type="text">Thank you. What a great blog post!
+I particularly like how you explain the importance of the topic in the beginning.</content>
+  </entry>
+  <entry>
+    <title>I disagree.</title>
+    <id>yace:yace-comments:post/another-blog-post:comment:7u4UygKynDCXR_RBZyqXJ</id>
+    <updated>2018-10-10T01:01:33.048Z</updated>
+    <author><name>Anonymous</name></author>
+    <content type="text">I disagree.</content>
+  </entry>
+
+</feed>
+```
+
 ## Configuration
 
 The following options can be configured.

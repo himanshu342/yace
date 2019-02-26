@@ -97,6 +97,7 @@ resource "aws_lambda_function" "get_comments" {
 
   environment {
     variables = {
+      INSTANCE_NAME = "${var.name}",
       TABLE = "${aws_dynamodb_table.db.id}",
       CORS_ALLOWED_ORIGIN = "${var.cors_allowed_origin}"
     }
@@ -250,6 +251,37 @@ resource "aws_api_gateway_method_response" "get_comments" {
         "method.response.header.Access-Control-Allow-Origin" = true
     }
     depends_on = ["module.get_comments_cors"]
+}
+
+// > getComments feed
+
+resource "aws_api_gateway_resource" "pre_feed_comments" {
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  parent_id   = "${aws_api_gateway_rest_api.api.root_resource_id}"
+  path_part   = "feed"
+}
+
+resource "aws_api_gateway_resource" "feed_comments" {
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  parent_id   = "${aws_api_gateway_resource.pre_feed_comments.id}"
+  path_part   = "{proxy+}"
+}
+
+resource "aws_api_gateway_method" "feed" {
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  resource_id = "${aws_api_gateway_resource.feed_comments.id}"
+  http_method = "GET"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "feed_comments" {
+  rest_api_id = "${aws_api_gateway_rest_api.api.id}"
+  resource_id = "${aws_api_gateway_resource.feed_comments.id}"
+  http_method = "${aws_api_gateway_method.feed.http_method}"
+
+  integration_http_method = "POST"
+  type = "AWS_PROXY"
+  uri = "${aws_lambda_function.get_comments.invoke_arn}"
 }
 
 // > acceptComment
