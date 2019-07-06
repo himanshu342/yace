@@ -13,7 +13,7 @@ To combat spam and malicious content, all comments have to be approved before be
 
 ## Installation
 
-yace is provided as a Terraform module. To prepare the Lambda functions, it needs [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/) to be installed on the system.
+yace is provided as a Terraform module. To prepare the Lambda functions, it needs [Node.js](https://nodejs.org) and [npm](https://www.npmjs.com/) to be installed on the system. yace needs at least Terraform 0.12.
 
 To use it, simply include the module in your Terraform infrastructure definition. For more information, please refer to the [Terraform documentation on modules](https://www.terraform.io/docs/modules/usage.html).
 
